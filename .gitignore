@@ -1,0 +1,46 @@
+# === Visual Studio ===
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# === Build results ===
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Ww][Ii][Nn]32/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+
+# === NuGet ===
+*.nupkg
+**/[Pp]ackages/*
+!**/[Pp]ackages/build/
+*.nuget.props
+*.nuget.targets
+
+# === VSTO ===
+*.vsto
+*.manifest
+*.application
+
+# === ClickOnce 构建输出 ===
+publish/*.vsto
+publish/*.dll
+publish/*.exe
+publish/*.application
+publish/*.manifest
+publish/Application Files/
+
+# === Secrets ===
+**/appsettings*.json
+*.pfx
+*.key
+*.pem
