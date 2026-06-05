@@ -1,49 +1,50 @@
 @echo off
-chcp 65001 >nul
-title WAI 插件卸载程序
+chcp 437 >nul
+setlocal enabledelayedexpansion
+
+title WAI Add-in Uninstaller
 
 echo ============================================
-echo   WAI - Word AI 侧边栏插件 卸载
+echo   WAI - Word AI Sidebar v0.1.0
+echo   Uninstaller
 echo ============================================
 echo.
 
-:: 检查管理员权限
+:: Run as admin check
 net session >nul 2>&1
 if %errorLevel% neq 0 (
-    echo [!] 请右键选择"以管理员身份运行"本程序。
+    echo [ERROR] Please right-click Uninstall.bat and select "Run as administrator".
+    echo.
     pause
     exit /b 1
 )
 
-echo [1/2] 从系统中移除 WAI 插件...
+echo [1/3] Removing VSTO add-in registration...
 
-:: 通过注册表查找并移除 ClickOnce 安装的 WAI 插件
-for /f "tokens=*" %%a in ('dir "%userprofile%\AppData\Local\Apps\2.0\*WaiAddIn*" /s /b /ad 2^>nul') do (
-    echo     找到插件目录: %%a
-    rd /s /q "%%a" 2>nul
-)
+:: Remove COM add-in registry entries
+reg delete "HKCU\Software\Microsoft\Office\Word\Addins\WaiAddIn" /f >nul 2>&1
+reg delete "HKLM\Software\Microsoft\Office\Word\Addins\WaiAddIn" /f >nul 2>&1
 
-:: 清除 VSTO 缓存
-if exist "%localappdata%\Microsoft\VSTO\Cache" (
-    echo     清除 VSTO 缓存...
-    del /f /q "%localappdata%\Microsoft\VSTO\Cache\*WaiAddIn*" 2>nul
-)
+echo [2/3] Clearing local settings and cache...
 
-:: 清除本地设置数据
+:: Remove settings directory
 if exist "%localappdata%\WAI" (
-    echo     清除本地设置...
-    rd /s /q "%localappdata%\WAI" 2>nul
+    rd /s /q "%localappdata%\WAI"
 )
 
-echo [2/2] 正在清除 Word COM 加载项注册...
-:: 移除 Word 加载项注册表项
-reg delete "HKCU\Software\Microsoft\Office\Word\Addins\WaiAddIn" /f 2>nul
-reg delete "HKLM\Software\Microsoft\Office\Word\Addins\WaiAddIn" /f 2>nul
+:: Remove VSTO ClickOnce cache
+if exist "%localappdata%\Apps\2.0" (
+    for /f "tokens=*" %%a in ('dir "%localappdata%\Apps\2.0\*WaiAddIn*" /s /b /ad 2^>nul') do (
+        rd /s /q "%%a" 2>nul
+    )
+)
 
+echo [3/3] Done!
 echo.
 echo ============================================
-echo   ✅ WAI 已从系统中卸载。
-echo   请重启 Word 确认插件已移除。
+echo   SUCCESS! WAI has been uninstalled.
+echo
+echo   Please restart Microsoft Word.
 echo ============================================
 echo.
 pause
